@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Tático - Reunião Financeira | Casas Goianita</title>
+    
+    <!-- Fontes (Critical Loading) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Ícones Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind CSS (Utilizado apenas para estrutura de layout, cores via V6.0 Tokens) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* --- DESIGN SYSTEM LIVE V6.0 (CORE) --- */
+        :root {
+            /* Atmosfera */
+            --live-deep: #06192a;
+            --live-glass: rgba(10, 36, 61, 0.70);
+            --live-glass-hover: rgba(15, 45, 75, 0.85);
+            --glass-blur: blur(16px) saturate(180%);
+            
+            /* Luz & Ação */
+            --live-accent: #00e800;
+            --live-accent-dim: rgba(0, 232, 0, 0.15);
+            --kinetic-gradient: linear-gradient(90deg, #ffffff 0%, #cccccc 50%, #00e800 100%);
+            
+            /* Física */
+            --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --ease-fluid: cubic-bezier(0.4, 0.0, 0.2, 1);
+            
+            /* Bordas */
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-active: rgba(0, 232, 0, 0.4);
+            
+            /* Fontes */
+            --font-primary: 'Poppins', sans-serif;
+            --font-analytical: 'Merriweather', serif;
+        }
+
+        /* --- GLOBAL RESET & BASE --- */
+        body {
+            background-color: var(--live-deep);
+            background-image: url('https://www.transparenttextures.com/patterns/cubes.png');
+            background-attachment: fixed;
+            color: #ffffff;
+            font-family: var(--font-primary);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- EFEITO FLASHLIGHT (DESKTOP) --- */
+        #flashlight {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background: radial-gradient(600px circle at var(--x, 50%) var(--y, 50%), rgba(0, 232, 0, 0.06), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        @media (hover: hover) {
+            #flashlight { opacity: 1; }
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1.kinetic-title {
+            background: var(--kinetic-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: shine 5s linear infinite;
+            letter-spacing: -0.02em;
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        .text-analytical {
+            font-family: var(--font-analytical);
+            line-height: 1.6;
+            color: #cccccc;
+        }
+
+        /* --- GLASS COMPONENTS --- */
+        .glass-card {
+            background: var(--live-glass);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            transition: transform 0.4s var(--spring-bounce), box-shadow 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent);
+            transform: skewX(-25deg);
+            transition: 0.5s;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--border-active);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+            background: var(--live-glass-hover);
+        }
+        
+        .glass-card:hover::before {
+            left: 150%;
+        }
+
+        /* --- NEON CHECKBOXES --- */
+        .neon-checkbox {
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border-subtle);
+            border-radius: 6px;
+            background: rgba(0,0,0,0.3);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s var(--spring-bounce);
+        }
+
+        .neon-checkbox:checked {
+            background: var(--live-accent);
+            border-color: var(--live-accent);
+            box-shadow: 0 0 10px var(--live-accent);
+            transform: scale(1.1);
+        }
+
+        .neon-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            color: #000;
+            font-weight: bold;
+            font-size: 16px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* --- PROGRESS BAR --- */
+        .progress-container {
+            background: rgba(255,255,255,0.1);
+            border-radius: 99px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: var(--live-accent);
+            height: 100%;
+            width: 0%;
+            transition: width 1s var(--spring-bounce);
+            box-shadow: 0 0 10px var(--live-accent);
+        }
+
+        /* --- ANIMATIONS --- */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s var(--ease-fluid) forwards;
+        }
+
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+
+        /* --- TAGS --- */
+        .tag {
+            font-size: 0.75rem;
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .tag-urgent { background: rgba(255, 50, 50, 0.2); color: #ff5555; border: 1px solid rgba(255, 50, 50, 0.4); }
+        .tag-culture { background: rgba(0, 232, 0, 0.15); color: var(--live-accent); border: 1px solid rgba(0, 232, 0, 0.4); }
+        .tag-gov { background: rgba(50, 150, 255, 0.2); color: #55aaff; border: 1px solid rgba(50, 150, 255, 0.4); }
+
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Flashlight Effect Container -->
+    <div id="flashlight"></div>
+
+    <!-- Header -->
+    <header class="fixed top-0 w-full z-50 backdrop-blur-md border-b border-[rgba(255,255,255,0.05)] bg-[rgba(6,25,42,0.8)]">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <img src="https://raw.githubusercontent.com/Clebito2/ConsultoriaLive/main/Logo%20live%20oficial-21.png" alt="Live Consultoria" class="h-8">
+            <div class="hidden md:block text-sm text-gray-400 font-light tracking-wider">
+                PROJETO CASAS GOIANITA
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow pt-28 pb-20 px-4">
+        <div class="max-w-5xl mx-auto">
+            
+            <!-- Header Section -->
+            <div class="mb-12 text-center fade-in-up">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4 kinetic-title">Plano de Ação: Backlog Financeiro</h1>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto text-analytical">
+                    Monitoramento das demandas estratégicas levantadas na reunião com Éryca (Financeiro).
+                </p>
+            </div>
+
+            <!-- KPI Dashboard -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 fade-in-up delay-100">
+                <div class="glass-card p-6 flex flex-col items-center justify-center">
+                    <span class="text-sm text-gray-400 uppercase tracking-widest mb-2">Progresso Global</span>
+                    <div class="w-full progress-container mb-2">
+                        <div class="progress-fill" id="mainProgressBar"></div>
+                    </div>
+                    <span class="text-2xl font-bold text-white" id="progressText">0%</span>
+                </div>
+                
+                <div class="glass-card p-6 flex flex-col items-center justify-center">
+                    <span class="text-sm text-gray-400 uppercase tracking-widest mb-2">Tarefas Críticas</span>
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="alert-triangle" class="text-red-500 w-5 h-5"></i>
+                        <span class="text-2xl font-bold text-white">3 Pendentes</span>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 flex flex-col items-center justify-center">
+                    <span class="text-sm text-gray-400 uppercase tracking-widest mb-2">Impacto Cultural</span>
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="users" class="text-[#00e800] w-5 h-5"></i>
+                        <span class="text-2xl font-bold text-white">Alta Prioridade</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Grid -->
+            <div class="grid gap-8">
+
+                <!-- Section 1: Administrativo & Pessoal (Éryca) -->
+                <section class="fade-in-up delay-200">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="p-2 rounded-lg bg-[rgba(255,50,50,0.1)]">
+                            <i data-lucide="user-check" class="text-red-400"></i>
+                        </div>
+                        <h2 class="text-2xl font-semibold text-white">Pessoas & Administrativo</h2>
+                    </div>
+
+                    <div class="grid gap-4">
+                        <!-- Card 2 -->
+                        <div class="glass-card p-6 group">
+                            <div class="flex items-start gap-4">
+                                <div class="pt-1">
+                                    <input type="checkbox" class="neon-checkbox task-checkbox" data-weight="20">
+                                </div>
+                                <div class="flex-grow">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h3 class="text-lg font-bold text-white group-hover:text-[#00e800] transition-colors">Termo de Responsabilidade</h3>
+                                        <span class="tag tag-urgent">Crítico</span>
+                                    </div>
+                                    <p class="text-analytical text-sm mb-3">
+                                        Redação, aprovação e assinatura do documento onde a empresa reconhece as atribuições de Éryca e ela formaliza suas responsabilidades (Financeiro/RH).
+                                    </p>
+                                    <div class="flex items-center gap-2 text-xs text-gray-500 border-t border-[rgba(255,255,255,0.05)] pt-3">
+                                        <i data-lucide="file-text" class="w-3 h-3"></i>
+                                        <span>Entregável: PDF Assinado</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div class="glass-card p-6 group">
+                            <div class="flex items-start gap-4">
+                                <div class="pt-1">
+                                    <input type="checkbox" class="neon-checkbox task-checkbox" data-weight="20">
+                                </div>
+                                <div class="flex-grow">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h3 class="text-lg font-bold text-white group-hover:text-[#00e800] transition-colors">Gestão de Férias e Backup</h3>
+                                        <span class="tag tag-urgent">Risco Operacional</span>
+                                    </div>
+                                    <p class="text-analytical text-sm mb-3">
+                                        1. Definir data das férias. <br>
+                                        2. Selecionar substituto (interno ou temporário). <br>
+                                        3. Iniciar treinamento de "Sombra" 15 dias antes.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 2: Cultura e Bem-Estar -->
+                <section class="fade-in-up delay-300">
+                    <div class="flex items-center gap-3 mb-6 mt-8">
+                        <div class="p-2 rounded-lg bg-[rgba(0,232,0,0.1)]">
+                            <i data-lucide="heart-handshake" class="text-[#00e800]"></i>
+                        </div>
+                        <h2 class="text-2xl font-semibold text-white">Cultura Organizacional</h2>
+                    </div>
+
+                    <div class="grid gap-4">
+                        <!-- Card 4 -->
+                        <div class="glass-card p-6 group">
+                            <div class="flex items-start gap-4">
+                                <div class="pt-1">
+                                    <input type="checkbox" class="neon-checkbox task-checkbox" data-weight="15">
+                                </div>
+                                <div class="flex-grow">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h3 class="text-lg font-bold text-white group-hover:text-[#00e800] transition-colors">Saúde Mental (Psicologia)</h3>
+                                        <span class="tag tag-culture">Bem-Estar</span>
+                                    </div>
+                                    <p class="text-analytical text-sm mb-3">
+                                        Buscar convênio com psicólogos locais para atendimento subsidiado aos colaboradores.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 5 -->
+                        <div class="glass-card p-6 group">
+                            <div class="flex items-start gap-4">
+                                <div class="pt-1">
+                                    <input type="checkbox" class="neon-checkbox task-checkbox" data-weight="15">
+                                </div>
+                                <div class="flex-grow">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h3 class="text-lg font-bold text-white group-hover:text-[#00e800] transition-colors">Cartilha Anti-Assédio</h3>
+                                        <span class="tag tag-culture">Compliance</span>
+                                    </div>
+                                    <p class="text-analytical text-sm mb-3">
+                                        Criação de material educativo sobre assédio moral e sexual no trabalho. Proteção jurídica e melhoria do clima.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Card 6 -->
+                        <div class="glass-card p-6 group">
+                            <div class="flex items-start gap-4">
+                                <div class="pt-1">
+                                    <input type="checkbox" class="neon-checkbox task-checkbox" data-weight="10">
+                                </div>
+                                <div class="flex-grow">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h3 class="text-lg font-bold text-white group-hover:text-[#00e800] transition-colors">Plano de Engajamento</h3>
+                                        <span class="tag tag-culture">Retenção</span>
+                                    </div>
+                                    <p class="text-analytical text-sm mb-3">
+                                        Estruturar calendário de eventos, política de agradecimentos e esboço de plano de carreira.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 3: Governança -->
+                <section class="fade-in-up delay-300">
+                    <div class="flex items-center gap-3 mb-6 mt-8">
+                        <div class="p-2 rounded-lg bg-[rgba(50,150,255,0.1)]">
+                            <i data-lucide="shield-check" class="text-blue-400"></i>
+                        </div>
+                        <h2 class="text-2xl font-semibold text-white">Governança Corporativa</h2>
+                    </div>
+
+                    <div class="glass-card p-6 group">
+                        <div class="flex items-start gap-4">
+                            <div class="pt-1">
+                                <input type="checkbox" class="neon-checkbox task-checkbox" data-weight="10">
+                            </div>
+                            <div class="flex-grow">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="text-lg font-bold text-white group-hover:text-[#00e800] transition-colors">Formalização de Decisões</h3>
+                                    <span class="tag tag-gov">Estatutário</span>
+                                </div>
+                                <p class="text-analytical text-sm mb-3">
+                                    Documentar a obrigatoriedade de votação e assinatura conjunta para todas as decisões administrativas/financeiras de impacto (acima de determinado valor ou risco).
+                                </p>
+                                <div class="flex items-center gap-2 text-xs text-gray-500 border-t border-[rgba(255,255,255,0.05)] pt-3">
+                                    <i data-lucide="pen-tool" class="w-3 h-3"></i>
+                                    <span>Ação: Inserir no Acordo de Sócios</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-[rgba(255,255,255,0.05)] bg-[rgba(6,25,42,0.95)] py-8 mt-auto">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="text-gray-500 text-sm">
+                © 2025 Live Consultoria. Documento Confidencial.
+            </div>
+            <a href="mailto:cleberdonato@ecossistemalive.com.br" class="flex items-center gap-2 text-sm text-gray-400 hover:text-[#00e800] transition-colors">
+                <span>© Powered by Cléber Donato</span>
+                <i data-lucide="code" class="w-4 h-4"></i>
+            </a>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Flashlight Effect Logic
+        const flashlight = document.getElementById('flashlight');
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX;
+            const y = e.clientY;
+            flashlight.style.setProperty('--x', `${x}px`);
+            flashlight.style.setProperty('--y', `${y}px`);
+        });
+
+        // Progress Bar Logic
+        const checkboxes = document.querySelectorAll('.task-checkbox');
+        const progressBar = document.getElementById('mainProgressBar');
+        const progressText = document.getElementById('progressText');
+
+        function updateProgress() {
+            const totalTasks = checkboxes.length;
+            const completedTasks = Array.from(checkboxes).filter(cb => cb.checked).length;
+            const percentage = Math.round((completedTasks / totalTasks) * 100);
+
+            progressBar.style.width = `${percentage}%`;
+            progressText.innerText = `${percentage}%`;
+
+            // Visual feedback on completion
+            if (percentage === 100) {
+                progressBar.style.backgroundColor = '#00ff00';
+                progressBar.style.boxShadow = '0 0 20px #00ff00';
+            }
+        }
+
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', updateProgress);
+        });
+
+        // Add Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-up').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

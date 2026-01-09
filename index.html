@@ -3,485 +3,477 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Tático - Reunião Financeira | Casas Goianita</title>
+    <title>Live Consultoria: Inteligência Comercial 2026</title>
     
-    <!-- Fontes (Critical Loading) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Ícones Lucide -->
+    <!-- Bibliotecas Externas -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Poppins:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Tailwind CSS (Utilizado apenas para estrutura de layout, cores via V6.0 Tokens) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
     <style>
-        /* --- DESIGN SYSTEM LIVE V6.0 (CORE) --- */
+        /* --- Live V6.0 Design Tokens --- */
         :root {
-            /* Atmosfera */
             --live-deep: #06192a;
+            --live-bg-image: url('https://www.transparenttextures.com/patterns/cubes.png');
             --live-glass: rgba(10, 36, 61, 0.70);
-            --live-glass-hover: rgba(15, 45, 75, 0.85);
+            --live-glass-hover: rgba(15, 45, 75, 0.90);
             --glass-blur: blur(16px) saturate(180%);
-            
-            /* Luz & Ação */
-            --live-accent: #00e800;
-            --live-accent-dim: rgba(0, 232, 0, 0.15);
-            --kinetic-gradient: linear-gradient(90deg, #ffffff 0%, #cccccc 50%, #00e800 100%);
-            
-            /* Física */
-            --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-            --ease-fluid: cubic-bezier(0.4, 0.0, 0.2, 1);
-            
-            /* Bordas */
+            --live-accent: #00e800; /* Verde Laser */
+            --live-warning: #fbbf24;
+            --live-danger: #ef4444;
+            --live-text-main: #ffffff;
+            --live-text-muted: #94a3b8;
             --border-subtle: rgba(255, 255, 255, 0.08);
-            --border-active: rgba(0, 232, 0, 0.4);
-            
-            /* Fontes */
-            --font-primary: 'Poppins', sans-serif;
-            --font-analytical: 'Merriweather', serif;
+            --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        /* --- GLOBAL RESET & BASE --- */
         body {
+            font-family: 'Poppins', sans-serif;
             background-color: var(--live-deep);
-            background-image: url('https://www.transparenttextures.com/patterns/cubes.png');
-            background-attachment: fixed;
-            color: #ffffff;
-            font-family: var(--font-primary);
+            background-image: var(--live-bg-image);
+            color: var(--live-text-main);
             overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
         }
 
-        /* --- EFEITO FLASHLIGHT (DESKTOP) --- */
-        #flashlight {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-            background: radial-gradient(600px circle at var(--x, 50%) var(--y, 50%), rgba(0, 232, 0, 0.06), transparent 40%);
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-        
-        @media (hover: hover) {
-            #flashlight { opacity: 1; }
-        }
-
-        /* --- TYPOGRAPHY --- */
-        h1.kinetic-title {
-            background: var(--kinetic-gradient);
+        /* Tipografia Cinética */
+        .kinetic-text {
+            background: linear-gradient(90deg, #ffffff 0%, #cccccc 50%, #00e800 100%);
+            background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-size: 200% auto;
-            animation: shine 5s linear infinite;
-            letter-spacing: -0.02em;
+            animation: shine 6s linear infinite;
         }
+        @keyframes shine { to { background-position: 200% center; } }
 
-        @keyframes shine {
-            to { background-position: 200% center; }
-        }
-
-        .text-analytical {
-            font-family: var(--font-analytical);
-            line-height: 1.6;
-            color: #cccccc;
-        }
-
-        /* --- GLASS COMPONENTS --- */
-        .glass-card {
+        /* V6.0 Glass Card com Flashlight Effect */
+        .live-card {
             background: var(--live-glass);
             backdrop-filter: var(--glass-blur);
             border: 1px solid var(--border-subtle);
             border-radius: 16px;
-            transition: transform 0.4s var(--spring-bounce), box-shadow 0.3s ease, border-color 0.3s ease;
+            transition: transform 0.3s var(--spring-bounce), box-shadow 0.3s ease;
             position: relative;
             overflow: hidden;
+            z-index: 1;
         }
-
-        .glass-card::before {
-            content: '';
+        .live-card::before {
+            content: "";
             position: absolute;
-            top: 0;
-            left: -100%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent);
-            transform: skewX(-25deg);
-            transition: 0.5s;
-        }
-
-        .glass-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--border-active);
-            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
-            background: var(--live-glass-hover);
-        }
-        
-        .glass-card:hover::before {
-            left: 150%;
-        }
-
-        /* --- NEON CHECKBOXES --- */
-        .neon-checkbox {
-            appearance: none;
-            width: 24px;
-            height: 24px;
-            border: 2px solid var(--border-subtle);
-            border-radius: 6px;
-            background: rgba(0,0,0,0.3);
-            cursor: pointer;
-            position: relative;
-            transition: all 0.3s var(--spring-bounce);
-        }
-
-        .neon-checkbox:checked {
-            background: var(--live-accent);
-            border-color: var(--live-accent);
-            box-shadow: 0 0 10px var(--live-accent);
-            transform: scale(1.1);
-        }
-
-        .neon-checkbox:checked::after {
-            content: '✓';
-            position: absolute;
-            color: #000;
-            font-weight: bold;
-            font-size: 16px;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        /* --- PROGRESS BAR --- */
-        .progress-container {
-            background: rgba(255,255,255,0.1);
-            border-radius: 99px;
-            height: 8px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            background: var(--live-accent);
-            height: 100%;
-            width: 0%;
-            transition: width 1s var(--spring-bounce);
-            box-shadow: 0 0 10px var(--live-accent);
-        }
-
-        /* --- ANIMATIONS --- */
-        .fade-in-up {
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 16px;
+            padding: 1.5px;
+            background: radial-gradient(
+                800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+                rgba(255, 255, 255, 0.15), 
+                transparent 40%
+            );
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            -webkit-mask-composite: xor;
             opacity: 0;
-            transform: translateY(20px);
-            animation: fadeInUp 0.8s var(--ease-fluid) forwards;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 2;
         }
-
-        @keyframes fadeInUp {
-            to { opacity: 1; transform: translateY(0); }
+        .live-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.6);
         }
+        .live-card:hover::before { opacity: 1; }
 
-        .delay-100 { animation-delay: 100ms; }
-        .delay-200 { animation-delay: 200ms; }
-        .delay-300 { animation-delay: 300ms; }
-
-        /* --- TAGS --- */
-        .tag {
+        /* Tabela Customizada */
+        .custom-table th {
+            text-transform: uppercase;
             font-size: 0.75rem;
-            padding: 4px 12px;
-            border-radius: 99px;
+            letter-spacing: 0.05em;
+            color: var(--live-text-muted);
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .custom-table td {
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            font-size: 0.9rem;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--live-deep); }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--live-accent); }
+
+        /* Tag Styles */
+        .tag {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
         }
-        .tag-urgent { background: rgba(255, 50, 50, 0.2); color: #ff5555; border: 1px solid rgba(255, 50, 50, 0.4); }
-        .tag-culture { background: rgba(0, 232, 0, 0.15); color: var(--live-accent); border: 1px solid rgba(0, 232, 0, 0.4); }
-        .tag-gov { background: rgba(50, 150, 255, 0.2); color: #55aaff; border: 1px solid rgba(50, 150, 255, 0.4); }
+        .tag-red { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .tag-yellow { background: rgba(251, 191, 36, 0.2); color: #fcd34d; border: 1px solid rgba(251, 191, 36, 0.3); }
+        .tag-green { background: rgba(0, 232, 0, 0.15); color: #4ade80; border: 1px solid rgba(0, 232, 0, 0.3); }
+        .tag-blue { background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.3); }
 
+        .chart-container { position: relative; width: 100%; height: 280px; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col selection:bg-green-500 selection:text-white">
 
-    <!-- Flashlight Effect Container -->
-    <div id="flashlight"></div>
-
-    <!-- Header -->
-    <header class="fixed top-0 w-full z-50 backdrop-blur-md border-b border-[rgba(255,255,255,0.05)] bg-[rgba(6,25,42,0.8)]">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-            <img src="https://raw.githubusercontent.com/Clebito2/ConsultoriaLive/main/Logo%20live%20oficial-21.png" alt="Live Consultoria" class="h-8">
-            <div class="hidden md:block text-sm text-gray-400 font-light tracking-wider">
-                PROJETO CASAS GOIANITA
+    <!-- HEADER -->
+    <header class="w-full pt-10 pb-6 px-4 md:px-8 border-b border-white/5">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-4">
+                <img src="https://raw.githubusercontent.com/Clebito2/ConsultoriaLive/main/Logo%20live%20oficial-21.png" alt="Live Consultoria" class="h-14 w-auto brightness-110">
+            </div>
+            <div class="text-center md:text-right">
+                <h1 class="text-3xl md:text-4xl font-black tracking-tight kinetic-text">BRASIL 2026</h1>
+                <p class="text-sm text-gray-400 font-light mt-1">Inteligência Comercial & Gestão de Tempo</p>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="flex-grow pt-28 pb-20 px-4">
-        <div class="max-w-5xl mx-auto">
+    <main class="flex-grow w-full max-w-7xl mx-auto p-4 md:p-8 space-y-8">
+
+        <!-- 1. RESUMO EXECUTIVO (KPIs) -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="live-card p-5 flex flex-col justify-between h-32">
+                <div class="flex justify-between items-start">
+                    <span class="text-gray-400 text-xs font-bold uppercase">Dias Úteis Totais</span>
+                    <i data-lucide="calendar" class="text-blue-400 w-5 h-5"></i>
+                </div>
+                <div>
+                    <span class="text-3xl font-bold text-white">248</span>
+                    <span class="text-xs text-gray-500 block">De 365 dias corridos</span>
+                </div>
+            </div>
             
-            <!-- Header Section -->
-            <div class="mb-12 text-center fade-in-up">
-                <h1 class="text-4xl md:text-5xl font-bold mb-4 kinetic-title">Plano de Ação: Backlog Financeiro</h1>
-                <p class="text-xl text-gray-400 max-w-2xl mx-auto text-analytical">
-                    Monitoramento das demandas estratégicas levantadas na reunião com Éryca (Financeiro).
-                </p>
+            <div class="live-card p-5 flex flex-col justify-between h-32 border-l-4 border-l-yellow-500">
+                <div class="flex justify-between items-start">
+                    <span class="text-gray-400 text-xs font-bold uppercase">Horas Copa (Risco)</span>
+                    <i data-lucide="clock" class="text-yellow-400 w-5 h-5"></i>
+                </div>
+                <div>
+                    <span class="text-3xl font-bold text-white">~32h</span>
+                    <span class="text-xs text-gray-500 block">Considerando Brasil Campeão</span>
+                </div>
             </div>
 
-            <!-- KPI Dashboard -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 fade-in-up delay-100">
-                <div class="glass-card p-6 flex flex-col items-center justify-center">
-                    <span class="text-sm text-gray-400 uppercase tracking-widest mb-2">Progresso Global</span>
-                    <div class="w-full progress-container mb-2">
-                        <div class="progress-fill" id="mainProgressBar"></div>
-                    </div>
-                    <span class="text-2xl font-bold text-white" id="progressText">0%</span>
+            <div class="live-card p-5 flex flex-col justify-between h-32 border-l-4 border-l-red-500">
+                <div class="flex justify-between items-start">
+                    <span class="text-gray-400 text-xs font-bold uppercase">Feriados em Dias Úteis</span>
+                    <i data-lucide="calendar-off" class="text-red-400 w-5 h-5"></i>
                 </div>
+                <div>
+                    <span class="text-3xl font-bold text-white">12</span>
+                    <span class="text-xs text-gray-500 block">+ 3 "Enforcamentos" prováveis</span>
+                </div>
+            </div>
+
+            <div class="live-card p-5 flex flex-col justify-between h-32 border-l-4 border-l-green-500 bg-gradient-to-br from-[rgba(0,232,0,0.05)] to-transparent">
+                <div class="flex justify-between items-start">
+                    <span class="text-gray-400 text-xs font-bold uppercase">Oportunidades Varejo</span>
+                    <i data-lucide="trending-up" class="text-green-400 w-5 h-5"></i>
+                </div>
+                <div>
+                    <span class="text-3xl font-bold text-white">8+</span>
+                    <span class="text-xs text-gray-500 block">Datas de pico de consumo</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. ANÁLISE DETALHADA: CALENDÁRIO & IMPACTO -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- LISTA DE FERIADOS (Esquerda) -->
+            <div class="lg:col-span-7 live-card p-6 md:p-8">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-blue-500/10 rounded-lg">
+                        <i data-lucide="list" class="text-blue-400 w-5 h-5"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-white">Cronograma de Feriados 2026</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left custom-table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Feriado</th>
+                                <th>Dia</th>
+                                <th>Tipo</th>
+                                <th>Impacto Coml.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-white font-medium">01 Jan</td>
+                                <td>Confraternização Universal</td>
+                                <td>Qui</td>
+                                <td><span class="tag tag-red">Nacional</span></td>
+                                <td><span class="tag tag-yellow">Ponte (Qui-Dom)</span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-white font-medium">17 Fev</td>
+                                <td>Carnaval</td>
+                                <td>Ter</td>
+                                <td><span class="tag tag-yellow">Facultativo</span></td>
+                                <td><span class="tag tag-red">Paralisia (4 dias)</span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-white font-medium">03 Abr</td>
+                                <td>Paixão de Cristo</td>
+                                <td>Sex</td>
+                                <td><span class="tag tag-red">Nacional</span></td>
+                                <td><span class="tag tag-blue">Feriadão (3 dias)</span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-white font-medium">21 Abr</td>
+                                <td>Tiradentes</td>
+                                <td>Ter</td>
+                                <td><span class="tag tag-red">Nacional</span></td>
+                                <td><span class="tag tag-yellow">Ponte (Terça)</span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-white font-medium">01 Mai</td>
+                                <td>Dia do Trabalho</td>
+                                <td>Sex</td>
+                                <td><span class="tag tag-red">Nacional</span></td>
+                                <td><span class="tag tag-blue">Feriadão (3 dias)</span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-white font-medium">04 Jun</td>
+                                <td>Corpus Christi</td>
+                                <td>Qui</td>
+                                <td><span class="tag tag-yellow">Facultativo</span></td>
+                                <td><span class="tag tag-yellow">Ponte (Qui-Dom)</span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-white font-medium">07 Set</td>
+                                <td>Independência</td>
+                                <td>Seg</td>
+                                <td><span class="tag tag-red">Nacional</span></td>
+                                <td><span class="tag tag-blue">Feriadão (3 dias)</span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-white font-medium">12 Out</td>
+                                <td>N. Sra. Aparecida</td>
+                                <td>Seg</td>
+                                <td><span class="tag tag-red">Nacional</span></td>
+                                <td><span class="tag tag-green">Varejo Infantil</span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-white font-medium">02 Nov</td>
+                                <td>Finados</td>
+                                <td>Seg</td>
+                                <td><span class="tag tag-red">Nacional</span></td>
+                                <td><span class="tag tag-blue">Feriadão (3 dias)</span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-white font-medium">15 Nov</td>
+                                <td>Proclamação República</td>
+                                <td>Dom</td>
+                                <td><span class="tag tag-red">Nacional</span></td>
+                                <td><span class="tag tag-green">Baixo Impacto</span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-white font-medium">20 Nov</td>
+                                <td>Consciência Negra</td>
+                                <td>Sex</td>
+                                <td><span class="tag tag-red">Nacional</span></td>
+                                <td><span class="tag tag-blue">Feriadão (3 dias)</span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-white font-medium">25 Dez</td>
+                                <td>Natal</td>
+                                <td>Sex</td>
+                                <td><span class="tag tag-red">Nacional</span></td>
+                                <td><span class="tag tag-green">Vendas (Pico)</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- CENÁRIOS ESPECÍFICOS (Direita) -->
+            <div class="lg:col-span-5 space-y-6">
                 
-                <div class="glass-card p-6 flex flex-col items-center justify-center">
-                    <span class="text-sm text-gray-400 uppercase tracking-widest mb-2">Tarefas Críticas</span>
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="alert-triangle" class="text-red-500 w-5 h-5"></i>
-                        <span class="text-2xl font-bold text-white">3 Pendentes</span>
+                <!-- COPA DO MUNDO -->
+                <div class="live-card p-6 border-t-4 border-t-green-500">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i data-lucide="trophy" class="text-yellow-400 w-5 h-5"></i>
+                            Cenário: Brasil Campeão
+                        </h3>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-4">
+                        Considerando que o Brasil chegue à final (19/07), teremos <strong>8 jogos</strong>. Devido ao fuso horário (EUA/México/Canadá), os jogos serão à tarde/noite, afetando o 2º turno comercial.
+                    </p>
+                    <div class="bg-blue-900/30 p-4 rounded-lg border border-blue-500/20 mb-4">
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-gray-300">Fase de Grupos (3 jogos)</span>
+                            <span class="text-yellow-400 font-bold">~12h</span>
+                        </div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-gray-300">Mata-Mata (4 jogos dias úteis)</span>
+                            <span class="text-red-400 font-bold">~16h</span>
+                        </div>
+                        <div class="flex justify-between text-sm pt-2 border-t border-white/10 mt-2">
+                            <span class="text-white font-bold">Total Estimado Parado</span>
+                            <span class="text-white font-bold">28h a 32h</span>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="height: 180px;">
+                        <canvas id="cupChart"></canvas>
                     </div>
                 </div>
 
-                <div class="glass-card p-6 flex flex-col items-center justify-center">
-                    <span class="text-sm text-gray-400 uppercase tracking-widest mb-2">Impacto Cultural</span>
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="users" class="text-[#00e800] w-5 h-5"></i>
-                        <span class="text-2xl font-bold text-white">Alta Prioridade</span>
+                <!-- ELEIÇÕES -->
+                <div class="live-card p-6 border-t-4 border-t-yellow-500">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i data-lucide="vote" class="text-yellow-400 w-5 h-5"></i>
+                            Cenário: Eleições (2 Turnos)
+                        </h3>
                     </div>
+                    <p class="text-sm text-gray-400 mb-4">
+                        Assumindo alta polarização e realização de 2º turno. O impacto não é apenas nos domingos de votação.
+                    </p>
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-3 text-sm text-gray-300">
+                            <span class="text-yellow-500 font-bold">04 Out (Dom):</span>
+                            1º Turno. Lei Seca pode afetar entretenimento no Sábado à noite.
+                        </li>
+                        <li class="flex items-start gap-3 text-sm text-gray-300">
+                            <span class="text-yellow-500 font-bold">25 Out (Dom):</span>
+                            2º Turno. Segunda-feira pós-eleição (26/10) tende a ter produtividade reduzida (-20%) em escritórios devido a debates informais.
+                        </li>
+                    </ul>
                 </div>
-            </div>
-
-            <!-- Content Grid -->
-            <div class="grid gap-8">
-
-                <!-- Section 1: Administrativo & Pessoal (Éryca) -->
-                <section class="fade-in-up delay-200">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="p-2 rounded-lg bg-[rgba(255,50,50,0.1)]">
-                            <i data-lucide="user-check" class="text-red-400"></i>
-                        </div>
-                        <h2 class="text-2xl font-semibold text-white">Pessoas & Administrativo</h2>
-                    </div>
-
-                    <div class="grid gap-4">
-                        <!-- Card 2 -->
-                        <div class="glass-card p-6 group">
-                            <div class="flex items-start gap-4">
-                                <div class="pt-1">
-                                    <input type="checkbox" class="neon-checkbox task-checkbox" data-weight="20">
-                                </div>
-                                <div class="flex-grow">
-                                    <div class="flex justify-between items-start mb-2">
-                                        <h3 class="text-lg font-bold text-white group-hover:text-[#00e800] transition-colors">Termo de Responsabilidade</h3>
-                                        <span class="tag tag-urgent">Crítico</span>
-                                    </div>
-                                    <p class="text-analytical text-sm mb-3">
-                                        Redação, aprovação e assinatura do documento onde a empresa reconhece as atribuições de Éryca e ela formaliza suas responsabilidades (Financeiro/RH).
-                                    </p>
-                                    <div class="flex items-center gap-2 text-xs text-gray-500 border-t border-[rgba(255,255,255,0.05)] pt-3">
-                                        <i data-lucide="file-text" class="w-3 h-3"></i>
-                                        <span>Entregável: PDF Assinado</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Card 3 -->
-                        <div class="glass-card p-6 group">
-                            <div class="flex items-start gap-4">
-                                <div class="pt-1">
-                                    <input type="checkbox" class="neon-checkbox task-checkbox" data-weight="20">
-                                </div>
-                                <div class="flex-grow">
-                                    <div class="flex justify-between items-start mb-2">
-                                        <h3 class="text-lg font-bold text-white group-hover:text-[#00e800] transition-colors">Gestão de Férias e Backup</h3>
-                                        <span class="tag tag-urgent">Risco Operacional</span>
-                                    </div>
-                                    <p class="text-analytical text-sm mb-3">
-                                        1. Definir data das férias. <br>
-                                        2. Selecionar substituto (interno ou temporário). <br>
-                                        3. Iniciar treinamento de "Sombra" 15 dias antes.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Section 2: Cultura e Bem-Estar -->
-                <section class="fade-in-up delay-300">
-                    <div class="flex items-center gap-3 mb-6 mt-8">
-                        <div class="p-2 rounded-lg bg-[rgba(0,232,0,0.1)]">
-                            <i data-lucide="heart-handshake" class="text-[#00e800]"></i>
-                        </div>
-                        <h2 class="text-2xl font-semibold text-white">Cultura Organizacional</h2>
-                    </div>
-
-                    <div class="grid gap-4">
-                        <!-- Card 4 -->
-                        <div class="glass-card p-6 group">
-                            <div class="flex items-start gap-4">
-                                <div class="pt-1">
-                                    <input type="checkbox" class="neon-checkbox task-checkbox" data-weight="15">
-                                </div>
-                                <div class="flex-grow">
-                                    <div class="flex justify-between items-start mb-2">
-                                        <h3 class="text-lg font-bold text-white group-hover:text-[#00e800] transition-colors">Saúde Mental (Psicologia)</h3>
-                                        <span class="tag tag-culture">Bem-Estar</span>
-                                    </div>
-                                    <p class="text-analytical text-sm mb-3">
-                                        Buscar convênio com psicólogos locais para atendimento subsidiado aos colaboradores.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Card 5 -->
-                        <div class="glass-card p-6 group">
-                            <div class="flex items-start gap-4">
-                                <div class="pt-1">
-                                    <input type="checkbox" class="neon-checkbox task-checkbox" data-weight="15">
-                                </div>
-                                <div class="flex-grow">
-                                    <div class="flex justify-between items-start mb-2">
-                                        <h3 class="text-lg font-bold text-white group-hover:text-[#00e800] transition-colors">Cartilha Anti-Assédio</h3>
-                                        <span class="tag tag-culture">Compliance</span>
-                                    </div>
-                                    <p class="text-analytical text-sm mb-3">
-                                        Criação de material educativo sobre assédio moral e sexual no trabalho. Proteção jurídica e melhoria do clima.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Card 6 -->
-                        <div class="glass-card p-6 group">
-                            <div class="flex items-start gap-4">
-                                <div class="pt-1">
-                                    <input type="checkbox" class="neon-checkbox task-checkbox" data-weight="10">
-                                </div>
-                                <div class="flex-grow">
-                                    <div class="flex justify-between items-start mb-2">
-                                        <h3 class="text-lg font-bold text-white group-hover:text-[#00e800] transition-colors">Plano de Engajamento</h3>
-                                        <span class="tag tag-culture">Retenção</span>
-                                    </div>
-                                    <p class="text-analytical text-sm mb-3">
-                                        Estruturar calendário de eventos, política de agradecimentos e esboço de plano de carreira.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Section 3: Governança -->
-                <section class="fade-in-up delay-300">
-                    <div class="flex items-center gap-3 mb-6 mt-8">
-                        <div class="p-2 rounded-lg bg-[rgba(50,150,255,0.1)]">
-                            <i data-lucide="shield-check" class="text-blue-400"></i>
-                        </div>
-                        <h2 class="text-2xl font-semibold text-white">Governança Corporativa</h2>
-                    </div>
-
-                    <div class="glass-card p-6 group">
-                        <div class="flex items-start gap-4">
-                            <div class="pt-1">
-                                <input type="checkbox" class="neon-checkbox task-checkbox" data-weight="10">
-                            </div>
-                            <div class="flex-grow">
-                                <div class="flex justify-between items-start mb-2">
-                                    <h3 class="text-lg font-bold text-white group-hover:text-[#00e800] transition-colors">Formalização de Decisões</h3>
-                                    <span class="tag tag-gov">Estatutário</span>
-                                </div>
-                                <p class="text-analytical text-sm mb-3">
-                                    Documentar a obrigatoriedade de votação e assinatura conjunta para todas as decisões administrativas/financeiras de impacto (acima de determinado valor ou risco).
-                                </p>
-                                <div class="flex items-center gap-2 text-xs text-gray-500 border-t border-[rgba(255,255,255,0.05)] pt-3">
-                                    <i data-lucide="pen-tool" class="w-3 h-3"></i>
-                                    <span>Ação: Inserir no Acordo de Sócios</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
 
             </div>
         </div>
+
+        <!-- 3. LIVE INSIGHTS: COMO APROVEITAR (O Pulo do Gato) -->
+        <div class="space-y-4">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+                <i data-lucide="lightbulb" class="text-green-500"></i>
+                Live Insights: Oportunidades Varejo & Serviços
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Insight 1: Copa -->
+                <div class="live-card p-6 hover:border-green-500/50 transition-colors group">
+                    <div class="mb-4 bg-green-500/10 w-12 h-12 rounded-full flex items-center justify-center group-hover:bg-green-500/20 transition">
+                        <i data-lucide="beer" class="text-green-400 w-6 h-6"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-white mb-2">Copa: O Evento Social</h4>
+                    <p class="text-sm text-gray-400">
+                        Não lute contra a paralisação. Empresários devem criar <strong>"Kits Torcida"</strong> e eventos de transmissão na empresa ou restaurante.
+                        <br><br>
+                        <span class="text-green-400 font-bold">Ação:</span> Venda antecipada de pacotes de Happy Hour para os jogos da tarde.
+                    </p>
+                </div>
+
+                <!-- Insight 2: Feriadões -->
+                <div class="live-card p-6 hover:border-blue-500/50 transition-colors group">
+                    <div class="mb-4 bg-blue-500/10 w-12 h-12 rounded-full flex items-center justify-center group-hover:bg-blue-500/20 transition">
+                        <i data-lucide="shopping-bag" class="text-blue-400 w-6 h-6"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-white mb-2">Feriados na Segunda/Sexta</h4>
+                    <p class="text-sm text-gray-400">
+                        Com 6 feriados prolongados (Sex/Seg), o turismo regional e o delivery explodem.
+                        <br><br>
+                        <span class="text-blue-400 font-bold">Ação:</span> Varejo de moda deve focar em "Look Viagem" nas quartas-feiras anteriores. Delivery deve reforçar estoque.
+                    </p>
+                </div>
+
+                <!-- Insight 3: Novembro Fragmentado -->
+                <div class="live-card p-6 hover:border-yellow-500/50 transition-colors group">
+                    <div class="mb-4 bg-yellow-500/10 w-12 h-12 rounded-full flex items-center justify-center group-hover:bg-yellow-500/20 transition">
+                        <i data-lucide="zap" class="text-yellow-400 w-6 h-6"></i>
+                    </div>
+                    <h4 class="text-lg font-bold text-white mb-2">Novembro: Black Friday Antecipada</h4>
+                    <p class="text-sm text-gray-400">
+                        Com 3 feriados em Novembro, o mês fica "picotado". O consumidor perde o ritmo.
+                        <br><br>
+                        <span class="text-yellow-400 font-bold">Ação:</span> Não espere o fim do mês. Dilua as promoções de Black Friday durante todo o mês ("Black November") para capturar a atenção nos dias úteis.
+                    </p>
+                </div>
+            </div>
+        </div>
+
     </main>
 
-    <!-- Footer -->
-    <footer class="border-t border-[rgba(255,255,255,0.05)] bg-[rgba(6,25,42,0.95)] py-8 mt-auto">
-        <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="text-gray-500 text-sm">
-                © 2025 Live Consultoria. Documento Confidencial.
-            </div>
-            <a href="mailto:cleberdonato@ecossistemalive.com.br" class="flex items-center gap-2 text-sm text-gray-400 hover:text-[#00e800] transition-colors">
-                <span>© Powered by Cléber Donato</span>
-                <i data-lucide="code" class="w-4 h-4"></i>
-            </a>
-        </div>
+    <!-- FOOTER -->
+    <footer class="w-full py-8 border-t border-white/5 mt-8 text-center bg-black/20 backdrop-blur-md">
+        <p class="text-sm text-gray-500 font-light">
+            Live Consultoria | Sistema de Inteligência V6.0
+        </p>
+        <p class="text-xs text-gray-600 mt-1">Desenvolvido por Cléber Donato</p>
     </footer>
 
-    <!-- Scripts -->
+    <!-- LOGIC -->
     <script>
-        // Initialize Lucide Icons
+        // Init Icons
         lucide.createIcons();
 
-        // Flashlight Effect Logic
-        const flashlight = document.getElementById('flashlight');
-        document.addEventListener('mousemove', (e) => {
-            const x = e.clientX;
-            const y = e.clientY;
-            flashlight.style.setProperty('--x', `${x}px`);
-            flashlight.style.setProperty('--y', `${y}px`);
-        });
-
-        // Progress Bar Logic
-        const checkboxes = document.querySelectorAll('.task-checkbox');
-        const progressBar = document.getElementById('mainProgressBar');
-        const progressText = document.getElementById('progressText');
-
-        function updateProgress() {
-            const totalTasks = checkboxes.length;
-            const completedTasks = Array.from(checkboxes).filter(cb => cb.checked).length;
-            const percentage = Math.round((completedTasks / totalTasks) * 100);
-
-            progressBar.style.width = `${percentage}%`;
-            progressText.innerText = `${percentage}%`;
-
-            // Visual feedback on completion
-            if (percentage === 100) {
-                progressBar.style.backgroundColor = '#00ff00';
-                progressBar.style.boxShadow = '0 0 20px #00ff00';
+        // Physics: Flashlight Effect
+        const cards = document.querySelectorAll(".live-card");
+        document.addEventListener("mousemove", (e) => {
+            for (const card of cards) {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty("--mouse-x", `${x}px`);
+                card.style.setProperty("--mouse-y", `${y}px`);
             }
-        }
-
-        checkboxes.forEach(cb => {
-            cb.addEventListener('change', updateProgress);
         });
 
-        // Add Intersection Observer for fade-in animations
-        const observerOptions = {
-            threshold: 0.1
-        };
+        // Chart Configs
+        Chart.defaults.color = '#94a3b8';
+        Chart.defaults.font.family = "'Poppins', sans-serif";
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.animationPlayState = 'running';
-                    observer.unobserve(entry.target);
+        // Cup Impact Chart
+        const ctxCup = document.getElementById('cupChart').getContext('2d');
+        new Chart(ctxCup, {
+            type: 'line',
+            data: {
+                labels: ['Grupos', '16-avos', 'Oitavas', 'Quartas', 'Semi', 'Final'],
+                datasets: [{
+                    label: 'Acúmulo Horas Paradas',
+                    data: [12, 16, 20, 24, 28, 28], // Final is Sunday, so plateau
+                    borderColor: '#fbbf24',
+                    backgroundColor: 'rgba(251, 191, 36, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#06192a',
+                    pointBorderColor: '#fbbf24',
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                return context.raw + ' Horas Acumuladas';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: { grid: { color: 'rgba(255,255,255,0.05)' } },
+                    x: { grid: { display: false } }
                 }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.fade-in-up').forEach(el => {
-            observer.observe(el);
+            }
         });
     </script>
 </body>
